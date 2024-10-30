@@ -13,13 +13,19 @@ function App(props) {
     const newCurrCards = [cardDeck.pop(), cardDeck.pop()];
     setCurrCards(newCurrCards);
   };
-  // You can write JavaScript here, just don't try and set your state!
+  const getCardImage = (name, suit) => {
+    let cardCode = name;
+    name === "10" ? (cardCode = "0") : (cardCode = name);
+    return `https://deckofcardsapi.com/static/img/${cardCode[0]}${suit[0]}.png`;
+  };
 
-  // You can access your current components state here, as indicated below
   const currCardElems = currCards.map(({ name, suit }) => (
-    // Give each list element a unique key
-    <div key={`${name}${suit}`}>
-      {name} of {suit}
+    <div key={`${name}${suit}`} className="card-container">
+      <img
+        src={getCardImage(name, suit)}
+        alt={`${name} of ${suit}`}
+        className="card-image"
+      />
     </div>
   ));
 
@@ -30,7 +36,7 @@ function App(props) {
       </div>
       <div className="card">
         <h2>React High Card 🚀</h2>
-        {currCardElems}
+        <div className="cards-display">{currCardElems}</div>
         <br />
         <button onClick={dealCards}>Deal</button>
       </div>
