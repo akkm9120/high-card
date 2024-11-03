@@ -10,6 +10,7 @@ function App(props) {
   const [score, setScore] = useState(0);
   const [canDrawExtra, setCanDrawExtra] = useState(false);
   const [botScore, setBotScore] = useState(0);
+  const [showWinner, setShowWinner] = useState(false);
 
   const calculateScore = (cards) => {
     const values = cards.map((card) => {
@@ -22,6 +23,59 @@ function App(props) {
     return sum % 10;
   };
 
+  const getSuitRank = (suit) => {
+    const ranks = { Spades: 4, Hearts: 3, Diamonds: 2, Clubs: 1 };
+    return ranks[suit];
+  };
+
+  const getCardRank = (name) => {
+    const ranks = { Ace: 5, King: 4, Queen: 3, Jack: 2 };
+    return ranks[name] || 1;
+  };
+
+  const determineWinner = () => {
+    const playerScore = calculateScore(currCards);
+    const botScoreVal = calculateScore(botCards);
+    if (playerScore > botScoreVal) return "Player wins!";
+    if (botScoreVal > playerScore) return "Bot wins!";
+
+    // If scores are equal, check card count first
+    if (currCards.length < botCards.length) return "Player wins!";
+    if (botCards.length < currCards.length) return "Bot wins!";
+
+    // If card count is also equal, check card ranks and suits
+    const playerHighestRank = Math.max(
+      ...currCards.map((card) => getCardRank(card.name))
+    );
+    const botHighestRank = Math.max(
+      ...botCards.map((card) => getCardRank(card.name))
+    );
+    if (playerHighestRank > botHighestRank) return "Player wins!";
+    if (botHighestRank > playerHighestRank) return "Bot wins!";
+
+    // If ranks are equal, check if any cards have same suit
+    const playerSameSuit = currCards.every(
+      (card) => card.suit === currCards[0].suit
+    );
+    const botSameSuit = botCards.every(
+      (card) => card.suit === botCards[0].suit
+    );
+    if (playerSameSuit && !botSameSuit) return "Player wins!";
+    if (botSameSuit && !playerSameSuit) return "Bot wins!";
+
+    // If both have same suit or neither has same suit, compare highest suit
+    const playerHighestSuit = Math.max(
+      ...currCards.map((card) => getSuitRank(card.suit))
+    );
+    const botHighestSuit = Math.max(
+      ...botCards.map((card) => getSuitRank(card.suit))
+    );
+    if (playerHighestSuit > botHighestSuit) return "Player wins!";
+    if (botHighestSuit > playerHighestSuit) return "Bot wins!";
+
+    return "It's a tie!";
+  };
+
   const dealCards = () => {
     const newCurrCards = [cardDeck.pop(), cardDeck.pop()];
     const newBotCards = [cardDeck.pop(), cardDeck.pop()];
@@ -32,6 +86,7 @@ function App(props) {
     setScore(calculateScore(newCurrCards));
     setBotScore(calculateScore(newBotCards));
     setCanDrawExtra(true);
+    setShowWinner(false);
   };
 
   const drawExtraCard = () => {
@@ -41,7 +96,27 @@ function App(props) {
       setCurrCards(newCards);
       setScore(calculateScore(newCards));
       setCanDrawExtra(false);
+
+      // Bot's turn to decide
+      const currentBotScore = calculateScore(botCards);
+      if (currentBotScore < 5 && botCards.length < 3) {
+        const newBotCards = [...botCards, cardDeck.pop()];
+        setBotCards(newBotCards);
+        setBotScore(calculateScore(newBotCards));
+      }
+      setShowWinner(true);
     }
+  };
+
+  const decideWinner = () => {
+    const currentBotScore = calculateScore(botCards);
+    if (currentBotScore < 5 && botCards.length < 3) {
+      const newBotCards = [...botCards, cardDeck.pop()];
+      setBotCards(newBotCards);
+      setBotScore(calculateScore(newBotCards));
+    }
+    setCanDrawExtra(false);
+    setShowWinner(true);
   };
 
   const getCardImage = (name, suit) => {
@@ -92,10 +167,14 @@ function App(props) {
         </div>
         <p>Your Score: {score}</p>
         {checkNaturalWin() && <p>Natural Win! (8 or 9)</p>}
+        {showWinner && <h1>{determineWinner()}</h1>}
         <br />
         <button onClick={dealCards}>Deal</button>
         {canDrawExtra && currCards.length < 3 && (
-          <button onClick={drawExtraCard}>Draw Extra Card</button>
+          <>
+            <button onClick={drawExtraCard}>Draw Extra Card</button>
+            <button onClick={decideWinner}>Show Winner</button>
+          </>
         )}
       </div>
     </>
