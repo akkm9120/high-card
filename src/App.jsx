@@ -25,6 +25,8 @@ function App(props) {
   const dealCards = () => {
     const newCurrCards = [cardDeck.pop(), cardDeck.pop()];
     const newBotCards = [cardDeck.pop(), cardDeck.pop()];
+    console.log(newCurrCards);
+    console.log(newBotCards);
     setBotCards(newBotCards);
     setCurrCards(newCurrCards);
     setScore(calculateScore(newCurrCards));
@@ -35,6 +37,7 @@ function App(props) {
   const drawExtraCard = () => {
     if (currCards.length < 3) {
       const newCards = [...currCards, cardDeck.pop()];
+      console.log(newCards);
       setCurrCards(newCards);
       setScore(calculateScore(newCards));
       setCanDrawExtra(false);
