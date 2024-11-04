@@ -33,14 +33,33 @@ function App(props) {
     return ranks[name] || 1;
   };
 
+  const playerWin = () => {
+    return (
+      <div>
+        <iframe
+          src="https://giphy.com/embed/jJQC2puVZpTMO4vUs0"
+          width="480"
+          height="398"
+          style={{}}
+          frameBorder="0"
+          className="giphy-embed"
+          allowFullScreen
+        />
+        <p>
+          <h1>You Win!!!</h1>
+        </p>
+      </div>
+    );
+  };
+
   const determineWinner = () => {
     const playerScore = calculateScore(currCards);
     const botScoreVal = calculateScore(botCards);
-    if (playerScore > botScoreVal) return "Player wins!";
+    if (playerScore > botScoreVal) return playerWin();
     if (botScoreVal > playerScore) return "Bot wins!";
 
     // If scores are equal, check card count first
-    if (currCards.length < botCards.length) return "Player wins!";
+    if (currCards.length < botCards.length) return playerWin();
     if (botCards.length < currCards.length) return "Bot wins!";
 
     // If card count is also equal, check card ranks and suits
@@ -50,7 +69,7 @@ function App(props) {
     const botHighestRank = Math.max(
       ...botCards.map((card) => getCardRank(card.name))
     );
-    if (playerHighestRank > botHighestRank) return "Player wins!";
+    if (playerHighestRank > botHighestRank) return playerWin();
     if (botHighestRank > playerHighestRank) return "Bot wins!";
 
     // If ranks are equal, check if any cards have same suit
@@ -60,7 +79,7 @@ function App(props) {
     const botSameSuit = botCards.every(
       (card) => card.suit === botCards[0].suit
     );
-    if (playerSameSuit && !botSameSuit) return "Player wins!";
+    if (playerSameSuit && !botSameSuit) return playerWin();
     if (botSameSuit && !playerSameSuit) return "Bot wins!";
 
     // If both have same suit or neither has same suit, compare highest suit
@@ -70,7 +89,7 @@ function App(props) {
     const botHighestSuit = Math.max(
       ...botCards.map((card) => getSuitRank(card.suit))
     );
-    if (playerHighestSuit > botHighestSuit) return "Player wins!";
+    if (playerHighestSuit > botHighestSuit) return playerWin();
     if (botHighestSuit > playerHighestSuit) return "Bot wins!";
 
     return "It's a tie!";
@@ -119,6 +138,8 @@ function App(props) {
     setShowWinner(true);
   };
 
+  const cardBack = "https://deckofcardsapi.com/static/img/back.png";
+
   const getCardImage = (name, suit) => {
     let cardCode = name;
     name === "10" ? (cardCode = "0") : (cardCode = name);
@@ -142,8 +163,8 @@ function App(props) {
   const botCardElems = botCards.map(({ name, suit }) => (
     <div key={`${name}${suit}`} className="card-container">
       <img
-        src={getCardImage(name, suit)}
-        alt={`${name} of ${suit}`}
+        src={showWinner ? getCardImage(name, suit) : cardBack}
+        alt={showWinner ? `${name} of ${suit}` : "???"}
         className="card-image"
       />
     </div>
@@ -151,16 +172,14 @@ function App(props) {
 
   return (
     <>
-      <div>
-        <img src={logo} className="logo" alt="Rocket logo" />
-      </div>
       <h2>React High Card 🚀</h2>
       <div className="card">
         <h3>Bot's Cards:</h3>
         <div className="cards-display" style={{ display: "flex", gap: "1rem" }}>
           {botCardElems}
         </div>
-        <p>Bot's Score: {botScore}</p>
+        <p>Bot's Score: {showWinner ? botScore : `You will never know..`}</p>
+
         <h3>Your Cards:</h3>
         <div className="cards-display" style={{ display: "flex", gap: "1rem" }}>
           {currCardElems}
