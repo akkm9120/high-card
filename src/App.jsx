@@ -1,6 +1,6 @@
 import logo from "/logo.png";
 import "./App.css";
-import { makeShuffledDeck } from "./utils.js";
+import { makeShuffledDeck } from "./utils.jsx";
 import { useState } from "react";
 
 function App(props) {
