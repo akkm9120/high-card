@@ -40,3 +40,12 @@
 .read-the-docs {
   color: #888;
 }
+
+#gifpy iframe {
+  position: relative;
+  top: 0;
+  transition: top ease 0.5s;
+}
+#gifpy:active iframe {
+  top: -100px;
+}

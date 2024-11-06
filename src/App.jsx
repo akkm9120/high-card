@@ -35,7 +35,10 @@ function App(props) {
 
   const playerWin = () => {
     return (
-      <div>
+      <div
+        id="giphy"
+        ref={(el) => el && el.scrollIntoView({ behavior: "smooth" })}
+      >
         <iframe
           src="https://giphy.com/embed/jJQC2puVZpTMO4vUs0"
           width="480"
@@ -46,7 +49,7 @@ function App(props) {
           allowFullScreen
         />
         <p>
-          <h1>You Win!!!</h1>
+          <i>You Win!!!</i>
         </p>
       </div>
     );
@@ -138,7 +141,7 @@ function App(props) {
     setShowWinner(true);
   };
 
-  const cardBack = "https://deckofcardsapi.com/static/img/back.png";
+  const cardBack = `https://deckofcardsapi.com/static/img/back.png`;
 
   const getCardImage = (name, suit) => {
     let cardCode = name;
@@ -178,7 +181,7 @@ function App(props) {
         <div className="cards-display" style={{ display: "flex", gap: "1rem" }}>
           {botCardElems}
         </div>
-        <p>Bot's Score: {showWinner ? botScore : `You will never know..`}</p>
+        <p>Bot's Score: {showWinner ? botScore : ` You will never know..`}</p>
 
         <h3>Your Cards:</h3>
         <div className="cards-display" style={{ display: "flex", gap: "1rem" }}>
