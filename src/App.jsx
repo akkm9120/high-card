@@ -2,6 +2,8 @@ import logo from "/logo.png";
 import "./App.css";
 import { makeShuffledDeck } from "./utils.jsx";
 import { useState } from "react";
+import { calculateScore, getCardImage } from "./cardHelpers.jsx";
+import { determineWinner } from "./winnerLogic.jsx";
 
 function App(props) {
   const [cardDeck, setCardDeck] = useState(makeShuffledDeck());
@@ -11,27 +13,6 @@ function App(props) {
   const [canDrawExtra, setCanDrawExtra] = useState(false);
   const [botScore, setBotScore] = useState(0);
   const [showWinner, setShowWinner] = useState(false);
-
-  const calculateScore = (cards) => {
-    const values = cards.map((card) => {
-      if (card.name === "Ace") return 1;
-      if (["King", "Queen", "Jack"].includes(card.name)) return 10;
-      return parseInt(card.name);
-    });
-
-    const sum = values.reduce((acc, val) => acc + val, 0);
-    return sum % 10;
-  };
-
-  const getSuitRank = (suit) => {
-    const ranks = { Spades: 4, Hearts: 3, Diamonds: 2, Clubs: 1 };
-    return ranks[suit];
-  };
-
-  const getCardRank = (name) => {
-    const ranks = { Ace: 5, King: 4, Queen: 3, Jack: 2 };
-    return ranks[name] || 1;
-  };
 
   const playerWin = () => {
     return (
@@ -53,49 +34,6 @@ function App(props) {
         </p>
       </div>
     );
-  };
-
-  const determineWinner = () => {
-    const playerScore = calculateScore(currCards);
-    const botScoreVal = calculateScore(botCards);
-    if (playerScore > botScoreVal) return playerWin();
-    if (botScoreVal > playerScore) return "Bot wins!";
-
-    // If scores are equal, check card count first
-    if (currCards.length < botCards.length) return playerWin();
-    if (botCards.length < currCards.length) return "Bot wins!";
-
-    // If card count is also equal, check card ranks and suits
-    const playerHighestRank = Math.max(
-      ...currCards.map((card) => getCardRank(card.name))
-    );
-    const botHighestRank = Math.max(
-      ...botCards.map((card) => getCardRank(card.name))
-    );
-    if (playerHighestRank > botHighestRank) return playerWin();
-    if (botHighestRank > playerHighestRank) return "Bot wins!";
-
-    // If ranks are equal, check if any cards have same suit
-    const playerSameSuit = currCards.every(
-      (card) => card.suit === currCards[0].suit
-    );
-    const botSameSuit = botCards.every(
-      (card) => card.suit === botCards[0].suit
-    );
-    if (playerSameSuit && !botSameSuit) return playerWin();
-    if (botSameSuit && !playerSameSuit) return "Bot wins!";
-
-    // If both have same suit or neither has same suit, compare highest suit
-    const playerHighestSuit = Math.max(
-      ...currCards.map((card) => getSuitRank(card.suit))
-    );
-    const botHighestSuit = Math.max(
-      ...botCards.map((card) => getSuitRank(card.suit))
-    );
-    if (playerHighestSuit > botHighestSuit) return playerWin();
-    if (botHighestSuit > playerHighestSuit) return "Bot wins!";
-
-    return "It's a tie!";
   };
 
   const dealCards = () => {
@@ -142,12 +80,6 @@ function App(props) {
   };
 
   const cardBack = `https://deckofcardsapi.com/static/img/back.png`;
-
-  const getCardImage = (name, suit) => {
-    let cardCode = name;
-    name === "10" ? (cardCode = "0") : (cardCode = name);
-    return `https://deckofcardsapi.com/static/img/${cardCode[0]}${suit[0]}.png`;
-  };
 
   const checkNaturalWin = () => {
     return currCards.length === 2 && (score === 8 || score === 9);
