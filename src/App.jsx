@@ -52,7 +52,6 @@ function App(props) {
   const drawExtraCard = () => {
     if (currCards.length < 3) {
       const newCards = [...currCards, cardDeck.pop()];
-      console.log(newCards);
       setCurrCards(newCards);
       setScore(calculateScore(newCards));
       setCanDrawExtra(false);

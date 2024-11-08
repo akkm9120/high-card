@@ -23,3 +23,5 @@ const getCardImage = (name, suit) => {
   name === "10" ? (cardCode = "0") : (cardCode = name);
   return `https://deckofcardsapi.com/static/img/${cardCode[0]}${suit[0]}.png`;
 };
+
+export { calculateScore, getSuitRank, getCardRank, getCardImage };
