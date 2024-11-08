@@ -40,3 +40,5 @@ const determineWinner = () => {
 
   return "It's a tie!";
 };
+
+export default determineWinner;
