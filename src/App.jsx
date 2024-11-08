@@ -101,8 +101,7 @@ function App(props) {
   const dealCards = () => {
     const newCurrCards = [cardDeck.pop(), cardDeck.pop()];
     const newBotCards = [cardDeck.pop(), cardDeck.pop()];
-    console.log(...newCurrCards);
-    console.log(...newBotCards);
+
     setBotCards(newBotCards);
     setCurrCards(newCurrCards);
     setScore(calculateScore(newCurrCards));
