@@ -1,6 +1,6 @@
 import { calculateScore, getCardRank, getSuitRank } from "./cardHelpers";
 
-const determineWinner = () => {
+const determineWinner = (currCards, botCards) => {
   const playerScore = calculateScore(currCards);
   const botScoreVal = calculateScore(botCards);
   if (playerScore > botScoreVal) return playerWin();
@@ -41,4 +41,4 @@ const determineWinner = () => {
   return "It's a tie!";
 };
 
-export default determineWinner;
+export { determineWinner };
